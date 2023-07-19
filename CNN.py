@@ -21,7 +21,7 @@ image_path= Path("/home/kunet.ae/100053289/HPCAug2022/imagedir/")
 print(image_path)
 
 filepaths = pd.Series(list(image_path.glob(r'**/*.jpg')), name='Filepath').astype(str)
-features = pd.Series(filepaths.apply(lambda x: os.path.split(os.path.split(x)[0])[1]), name='Age')
+features = pd.Series(filepaths.apply(lambda x: os.path.split(os.path.split(x)[0])[1]), name='Data')
 features = features.str.split("_", n = 1, expand = True)
 
 min_max_scaler = preprocessing.MinMaxScaler()
@@ -48,7 +48,7 @@ val_images = train_gen.flow_from_dataframe(dataframe=train_df, x_col='Filepath',
 
 type(test.labels)
 
-# modell init
+# model init
 def compile_model(model):
     opt = tf.keras.optimizers.Adagrad(learning_rate = 1e-3)
     
@@ -79,19 +79,19 @@ def fit_model(model):
 #        callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=50, restore_best_weights=True), Callback()])
     return history
 
-# modell tanítása majd kiértékelése
+# model train
 def train_model(model):
     compile_model(model)
     history = fit_model(model)
     # plot_history(history)
     evaluate_model(model)
 
-# # loss-epoch függvényének kirajzolása
+# # loss-epoch
 #def plot_history(history):
 #   history_frame = pd.DataFrame(history.history)
 #   history_frame.loc[:, ['loss', 'val_loss']].plot()
     
-# modell kiértékelése RMSE és R^2 score-al
+# model RMSE and R^2 score
 def evaluate_model(model):
     predicted_ages = np.squeeze(model.predict(test))
     true_ages = test.labels
